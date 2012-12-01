@@ -13,6 +13,7 @@ from scrapy.spider import BaseSpider
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.selector import HtmlXPathSelector
+from scrapy.http import Request
 
 class GameItem(Item):
     url = Field()
@@ -42,15 +43,30 @@ class GameItem(Item):
     
 	
 class EspnSpider(CrawlSpider):
+    # Spider crawls ESPN's top 25 NCAA basketball rankings looking for game recaps
+    # When it stumbles in to a game recap, grab the game stats for each team and
+    # dump in to a SQLite database
     name = "espn"
     allowed_domains = ["espn.go.com"]
-#    start_urls = ["http://espn.go.com/mens-college-basketball/rankings"]
-    start_urls = ["http://espn.go.com/ncb/boxscore?gameId=323300197"]
-    rules = [Rule(SgmlLinkExtractor(allow=['/ncb/boxscore\?gameId=[0-9]*']), callback='parse_game')]
-#        Rule(SgmLinkExtractor(allow=''), 'parse_team'
+    start_urls = ["http://espn.go.com/mens-college-basketball/rankings"]
+#    start_urls = ["http://espn.go.com/ncb/boxscore?gameId=323300197"]
+    rules = [
+        Rule(SgmlLinkExtractor(allow=['/mens-college-basketball/team/_/id/'])),
+        Rule(SgmlLinkExtractor(allow=['/ncb/recap\?gameId=[0-9]*'])),
+        Rule(SgmlLinkExtractor(allow=['/ncb/boxscore\?gameId=[0-9]*']), callback='parse_game_boxscore')
+    ]
+
+#    def parse_team(self, response):
+#        # Furnish Request objects for each link to a game recap
+#        self.log('Made it to parse_team for %s' % response.url)
+#        return Request(url='', callback='parse_game_recap')
+#
+#    def parse_game_recap(self, response):
+#        self.log('Made it to parse_game_recap for %s' % response.url)
+#        # Furnish Request object for the boxscore, which contains the stats
     
-#    def parse_game(self, response):
-    def parse_game(self, response):
+    def parse_game_boxscore(self, response):
+        # Load the game stats in to an Item
         x = HtmlXPathSelector(response)
         game = GameItem()
         game['url'] = response.url        
@@ -78,6 +94,7 @@ class EspnSpider(CrawlSpider):
         game['visit_PF'] = x.select("//div[@id='my-players-table']/div[@class='mod-content']/table/tbody[6]/tr[1]/td[11]/text()").extract()
         game['visit_PTS'] = x.select("//div[@id='my-players-table']/div[@class='mod-content']/table/tbody[6]/tr[1]/td[12]/text()").extract()
 
-        print game
+        self.log('boxscore captured for %s vs %s' % (game['home_name'], game['visit_name']))
+        # print "I got into a boxscore page for " + game['home_name'] + " vs " + game['visit_name'] + "\n"
         return game
 
