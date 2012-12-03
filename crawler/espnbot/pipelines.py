@@ -1,4 +1,7 @@
+import sqlite3
+
 class sqlite_pipeline(object):
+    """Drop the GameItem into a SQLite database"""
 
     def process_item(self, item, spider):
         store_item_command = "INSERT OR ABORT INTO bb_games_stats " \
