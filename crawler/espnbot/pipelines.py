@@ -24,7 +24,7 @@ class sqlite_pipeline(object):
     def open_spider(self,spider):
         # similar examples seem to put this in __init__, but seems like it goes here
         self.db_connection = sqlite3.connect('ncaa_bb.db')
-        self.db_cursor = db_connection.cursor()
+        self.db_cursor = self.db_connection.cursor()
         self.db_cursor.execute('''CREATE TABLE IF NOT EXISTS bb_games_stats 
             (home_name TEXT, home_FGM INTEGER, home_FGA INTEGER, home_3PM INTEGER, home_3PA INTEGER, home_FTM INTEGER, home_FTA INTEGER,
              home_OREB INTEGER, home_AST INTEGER, home_STL INTEGER, home_BLK INTEGER, home_TO INTEGER, home_PF INTEGER, home_PTS INTEGER,
@@ -32,5 +32,4 @@ class sqlite_pipeline(object):
             visit_OREB INTEGER, visit_AST INTEGER, visit_STL INTEGER, visit_BLK INTEGER, visit_TO INTEGER, visit_PF INTEGER, visit_PTS INTEGER,
             url TEXT, date TEXT)
         ''')
-        self.log("open spider")
 
