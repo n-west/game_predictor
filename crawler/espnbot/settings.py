@@ -7,12 +7,15 @@
 #
 
 BOT_NAME = 'espnbot'
-BOT_VERSION = '1.0'
+BOT_VERSION = '1.1'
 
 ITEM_PIPELINES = ['espnbot.pipelines.sqlite_pipeline']
 SPIDER_MODULES = ['espnbot.spiders']
 NEWSPIDER_MODULE = 'espnbot.spiders'
 DEFAULT_ITEM_CLASS = 'espnbot.items.GameItem'
-USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
-LOG_LEVEL = 'DEBUG'
+USER_AGENT = 'bracketology/%s' % (BOT_VERSION)
+LOG_LEVEL = 'INFO'
+AUTOTHROTTLE_ENABLED = True
+DOWNLOAD_DELAY = 0.5
+DEPTH_LIMIT = 7
 

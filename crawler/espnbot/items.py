@@ -2,6 +2,7 @@ from scrapy.item import Item, Field
 
 class GameItem(Item):
     url = Field()
+    Id = Field()
     date = Field()
     home_name = Field()
     visit_name = Field()
