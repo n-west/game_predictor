@@ -31,7 +31,7 @@ class EspnSpider(CrawlSpider):
         game = GameItem()
 
         game['url'] = response.url
-        game['date'] = x.select("//div[@class='game-time-location']/p[1]/text()").extract()
+        game['date'] = x.select("//div[@class='game-time-location']/p[1]/text()").extract()[0]
 
         game['home_name'] = x.select("//div[@id='my-players-table']/div[@class='mod-content']/table/thead[1]/tr[1]/th[1]/text()").extract()[0]
         home_FGMA_A_str = x.select("//div[@id='my-players-table']/div[@class='mod-content']/table/tbody[3]/tr[1]/td[3]/text()").extract()[0]
